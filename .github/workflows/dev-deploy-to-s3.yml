@@ -3,7 +3,6 @@ name: Deploy to S3
 on:
   push:
     branches:
-      - main
       - dev
 
 # https://aws.amazon.com/blogs/security/use-iam-roles-to-connect-github-actions-to-actions-in-aws/
@@ -32,20 +31,8 @@ jobs:
         role-session-name: GitHub_to_AWS_via_FederatedOIDC
         aws-region: ${{ secrets.AWS_REGION }}
 
-    # Hello from AWS: WhoAmI
-    - name: Sts GetCallerIdentity
-      run: |
-        aws sts get-caller-identity
-
     - name: Sync to S3
       run: |
-        if [ "${{ github.ref_name }}" == "main" ]; then
-          BUCKET_NAME=${{ secrets.S3_BUCKET_MAIN }}
-        elif [ "${{ github.ref_name }}" == "dev" ]; then
-          BUCKET_NAME=${{ secrets.S3_BUCKET_DEV }}
-        else
-          echo "Branch not configured for deployment"
-          exit 1
-        fi
+        BUCKET_NAME=${{ secrets.S3_BUCKET_DEV }}
 
         aws s3 sync .output/public s3://$BUCKET_NAME --delete
