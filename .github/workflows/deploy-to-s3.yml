@@ -32,6 +32,11 @@ jobs:
         role-session-name: GitHub_to_AWS_via_FederatedOIDC
         aws-region: ${{ secrets.AWS_REGION }}
 
+    # Hello from AWS: WhoAmI
+    - name: Sts GetCallerIdentity
+      run: |
+        aws sts get-caller-identity
+
     - name: Sync to S3
       run: |
         if [ "${{ github.ref_name }}" == "main" ]; then
